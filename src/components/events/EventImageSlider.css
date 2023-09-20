@@ -1,0 +1,16 @@
+/* EventImageSlider.css */
+
+/* Dots container */
+.slick-dots {
+  text-align: center;
+}
+
+/* Active dot */
+.slick-dots li.slick-active button:before {
+  color: #000; /* Change the color of the active dot as needed */
+}
+
+/* Center dots */
+.slick-center button:before {
+  transform: scale(1.5); /* Increase the size of the center dot as needed */
+}

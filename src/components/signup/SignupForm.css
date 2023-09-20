@@ -1,0 +1,53 @@
+/* Updated SignupForm.css */
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly; /* Equal horizontal spacing */
+    align-items: flex-start; /* Start align vertically */
+width:100%
+  }
+  
+  .signup-form {
+  
+    margin: 10px; /* Equal margin on all sides */
+    padding: 20px; /* Equal padding on all sides */
+    background-color: #007bff; /* Blue background color */
+    border-radius: 5px; /* Add rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a shadow */
+    color: #fff; /* Text color */
+  
+  }
+  
+  .picture {
+    flex: 1; /* Takes up half of the container */
+    margin: 10px; /* Equal margin on all sides */
+    background-color: #e4e6e9; /* Blue background color */
+    border-radius: 5px; /* Add rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Add a shadow */
+    color: #fff; /* Text color */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    margin-bottom: 5px; /* Add spacing between label and input */
+  }
+  
+  .input-field {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .error {
+    color: red;
+    margin-top: 5px; /* Add spacing below error message */
+  }
+  
