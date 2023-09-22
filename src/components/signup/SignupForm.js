@@ -1,14 +1,14 @@
-// SignupForm.js
-import React, { useEffect } from 'react';
+
+
+import React, { useEffect,useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateState } from '../../store/auth/authSlice';
 import Loading from '../../assets/istockphoto-1305268276-612x612.jpg';
 import { Link } from 'react-router-dom';
-import  './SignupForm.css';
+import './SignupForm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 const validationSchema = Yup.object({
   username: Yup.string().required('Username is required'),
@@ -25,7 +25,8 @@ const validationSchema = Yup.object({
 function SignupForm() {
   const dispatch = useDispatch();
   const authData = useSelector((state) => state.auth);
-
+  const [registrationStatus, setRegistrationStatus] = useState(null);
+  const formikRef = React.useRef();
   const initialValues = {
     username: '',
     email: '',
@@ -36,14 +37,40 @@ function SignupForm() {
 
   useEffect(() => {
     console.log('Redux Auth Data:', authData);
+   
   }, [authData]);
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    // Handle form submission here, e.g., send data to a server
-    dispatch(updateState(values)); // Dispatch the action with form values
-    console.log('Form Values:', values); // Log the form values
+  // Rest of the code...
+  const handleSubmit = async (values, { setSubmitting }) => {
+    dispatch(updateState(values));
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error registering user');
+      }
+
+      const responseData = await response.json();
+  setSubmitting(false);
+      setRegistrationStatus('success');
+      console.log(responseData)
+
+    } catch (error) {
+      console.error('Error registering user:', error);
+      setRegistrationStatus('error');
+    }
+    
     setSubmitting(false);
   };
+
+  
+
 
   return (
     <div className="container">
@@ -58,6 +85,12 @@ function SignupForm() {
             >
               {({ isSubmitting }) => (
                 <Form>
+                  {registrationStatus === 'success' && (
+                    <div className="alert alert-success">Registration successful!</div>
+                  )}
+                  {registrationStatus === 'error' && (
+                    <div className="alert alert-danger">Error registering user.</div>
+                  )}
                   <div className="form-group">
                     <label htmlFor="username">Username</label>
                     <Field
@@ -95,6 +128,7 @@ function SignupForm() {
                       id="password"
                       name="password"
                       className="form-control"
+                      
                     />
                     <ErrorMessage name="password" component="div" className="error" />
                   </div>
@@ -105,6 +139,7 @@ function SignupForm() {
                       id="confirmPassword"
                       name="confirmPassword"
                       className="form-control"
+                      
                     />
                     <ErrorMessage name="confirmPassword" component="div" className="error" />
                   </div>
@@ -132,4 +167,3 @@ function SignupForm() {
 }
 
 export default SignupForm;
-

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './LoginForm.css';
 import Loading from './LoginGif';
-import { Link } from 'react-router-dom';
+import { Link,redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const navigate = useNavigate();
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };
@@ -14,10 +15,39 @@ function Login() {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(`Username: ${username}, Password: ${password}`);
+  
+   
+  
+    const values = { email: username, password: password };
+  
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error registering user');
+      }
+
+      const responseData = await response.json();
+
+        console.log(responseData)
+       return navigate('/display/event');
+    // return redirect('/display/event');
+  
+      // Redirect to another page or update the UI based on the successful login
+  
+    } catch (error) {
+      console.error('Error logging user:', error.email);
+    }
   };
+  
 
   return (
     <div className="container">
