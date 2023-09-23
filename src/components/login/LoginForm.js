@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+
 import './LoginForm.css';
 import Loading from './LoginGif';
 import { Link,redirect } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect } from 'react';
+
+import { useAuthContext } from '../../store/context/AuthContext';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { token } = useAuthContext();
+
+
+  useEffect(() => {
+    if (token) {
+      console.log("I don't have a token");
+      navigate('/events');
+    }}, [token]);
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
   };

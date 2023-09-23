@@ -1,31 +1,22 @@
 import logo from './logo.svg';
 import './App.css';
-import Login from './components/login/LoginForm';
-import Signup from './components/signup/SignupForm';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Outlet, RouterProvider } from 'react-router-dom';
 import Layout from './components/pages/RootNavigation';
-import { Provider } from 'react-redux'; // Import the Provider component
-import store from './store/Store'; // Import your Redux store
+import { Provider } from 'react-redux';
+import store from './store/Store';
 import CreateEvent from './components/pages/createEvent';
 import DisplayEvent from './components/pages/dispplayEvents';
 import DisplaySingleEvent from './components/pages/displaySingleEvent';
-
+import { AuthContextProvider } from './store/context/AuthContext';
+import LoginForm from './components/login/LoginForm'; // Import the LoginForm component
+import SignupForm from './components/signup/SignupForm'; // Import the SignupForm component
+import AppRoute from './routes/Routes';
 function App() {
   return (
     <Provider store={store}>
-      <Router>
-        <Layout>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/create/event" element={<CreateEvent />} />
-          <Route path="/display/event" element={<DisplayEvent/>} />
-          <Route path="/events/:eventName" element={<DisplaySingleEvent />} />
-          {/* Add more routes as needed */}
-        </Routes>
-        </Layout>
-      </Router>
-      
+      <AuthContextProvider>
+        <RouterProvider router={AppRoute}></RouterProvider>
+             </AuthContextProvider>
     </Provider>
   );
 }

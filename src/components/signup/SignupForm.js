@@ -9,7 +9,8 @@ import Loading from '../../assets/istockphoto-1305268276-612x612.jpg';
 import { Link } from 'react-router-dom';
 import './SignupForm.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../store/context/AuthContext';
 const validationSchema = Yup.object({
   username: Yup.string().required('Username is required'),
   email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -26,6 +27,8 @@ function SignupForm() {
   const dispatch = useDispatch();
   const authData = useSelector((state) => state.auth);
   const [registrationStatus, setRegistrationStatus] = useState(null);
+  const navigate = useNavigate();
+  const { token } = useAuthContext();
   const formikRef = React.useRef();
   const initialValues = {
     username: '',
@@ -34,7 +37,11 @@ function SignupForm() {
     password: '',
     confirmPassword: '',
   };
-
+  useEffect(() => {
+    if (token) {
+      console.log("I don't have a token");
+      navigate('/events');
+    }}, [token]);
   useEffect(() => {
     console.log('Redux Auth Data:', authData);
    
