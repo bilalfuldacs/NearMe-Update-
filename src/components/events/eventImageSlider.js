@@ -4,7 +4,8 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './EventImageSlider.css';
 
-function EventImageSlider() {
+function EventImageSlider({pictures}) {
+  console.log(pictures);
   const images = [
     'https://picsum.photos/900/400?random=1',
     'https://picsum.photos/900/400?random=2',
@@ -37,9 +38,9 @@ function EventImageSlider() {
   
       < > {/* Use offset-md-1 */}
         <Slider {...settings} ref={sliderRef}>
-          {images.map((image, index) => (
+          {pictures.map((image, index) => (
             <div key={index}>
-              <img src={image} alt={`Slide ${index}`} />
+              <img src={image.image_path} alt={`Slide ${index}`} className='w-50 h-100' />
             </div>
           ))}
         </Slider>

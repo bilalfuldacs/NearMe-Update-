@@ -1,60 +1,52 @@
-import React from 'react';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import FilterComponent from '../events/eventFilterBar';
 import DisplayCardEvent from '../events/eventDisplayCard';
 import eventImage from '../../assets/empty-blue-white-studio-backdrop-abstract-gradient-grey-background-vintage-color-design-89483978.webp';
+import { useNavigate,useLocation  } from 'react-router-dom';
+import React, {useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateEventState } from '../../store/event/eventSlice';
+import { useAuthContext } from '../../store/context/AuthContext';
 function DisplayEvent({ event }) {
-  const eventData = [
-    {
-      eventName: 'Event 1',
-      eventType: 'Food',
-      eventLocation: 'Leipzige Strasse 54.Fuulda,Germany',
-      eventImage: 'https://picsum.photos/300/200?random=1',
-      eventFrom:'2-04-2023',
-      eventTo:'2-04-2023'
-    },
-    {
-      eventName: 'Event 2',
-      eventType: 'Sports',
-      eventLocation: 'Location 2',
-      eventImage: 'https://picsum.photos/300/200?random=2',
-      eventFrom:'2-04-2023',
-      eventTo:'2-04-2023'
-    },
-    {
-      eventName: 'Event 3',
-      eventType: 'Food',
-      eventLocation: 'Location 3',
-      eventImage: 'https://picsum.photos/300/200?random=3',
-      eventFrom:'2-04-2023',
-      eventTo:'2-04-2023'
-    },
-    {
-      eventName: 'Event 4',
-      eventType: 'Sports',
-      eventLocation: 'Location 4',
-      eventImage: 'https://picsum.photos/300/200?random=4',
-      eventFrom:'2-04-2023',
-      eventTo:'2-04-2023'
-    },
-    {
-      eventName: 'Event 5',
-      eventType: 'Food',
-      eventLocation: 'Location 5',
-      eventImage: 'https://picsum.photos/300/200?random=5',
-      eventFrom:'2-04-2023',
-      eventTo:'2-04-2023'
-    },
-    {
-      eventName: 'Event 6',
-      eventType: 'Sports',
-      eventLocation: 'Location 6',
-      eventImage: 'https://picsum.photos/300/200?random=6',
-      eventFrom:'2-04-2023',
-      eventTo:'2-04-2023'
-    },
-    // Add more event objects as needed
-  ];
+  const navigate = useNavigate();
+  const { token } = useAuthContext();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const events = useSelector((state) => state.events.events);
+  console.log(events);
+  useEffect(() => {
+    if (!token) {
+     
+      navigate('/login');
+    }
+ 
+  
+  }, [token]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let responseData;
+
+        if (location.pathname === '/events/MyEvents') {
+          responseData = await Loader.fetchMyEvents();
+        } else if (location.pathname === '/events/display') {
+          responseData = await Loader.fetchAllEvents();
+        }
+
+        // Dispatch the action with the fetched data as payload
+        dispatch(updateEventState(responseData.EventData)); // Assuming responseData is an array
+
+       
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchData();
+  }, [location]);
+
+  
   const containerStyle = {
     minHeight: '100vh', // Ensure the container covers the entire viewport height
     position: 'relative', // Required for overlay
@@ -84,7 +76,7 @@ function DisplayEvent({ event }) {
 
         {/* Cards */}
         <div className="row mt-5">
-          {eventData.map((event, index) => (
+          {events.map((event, index) => (
             <div className="col-4 mb-3" key={index}>
               <DisplayCardEvent event={event} />
             </div>
@@ -94,6 +86,64 @@ function DisplayEvent({ event }) {
     </>
   );
 }
+
+
+
+export const Loader = {
+  fetchMyEvents: async () => {
+    console.log("i am here");
+    try {
+      // Retrieve the user's token from local storage
+      const token = localStorage.getItem('access_token'); // Modify this based on where you store the token
+
+      // Include the token in the request headers
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+      const response = await fetch('http://127.0.0.1:8000/api/Myevents', {
+        headers: headers, // Include the headers with the token
+      });
+
+      if (!response.ok) {
+        throw new Error('Error fetching user events');
+      }
+
+      const responseData = await response.json();
+      console.log(responseData);
+      return responseData;
+   
+    } catch (error) {
+      console.error('Error fetching user events:', error);
+    }
+  },
+  fetchAllEvents: async () => {
+    console.log("i am here in All events");
+    const token = localStorage.getItem('access_token'); // Modify this based on where you store the token
+
+      // Include the token in the request headers
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/Allevents');
+
+      if (!response.ok) {
+        throw new Error('Error fetching all events');
+      }
+
+      const responseData = await response.json();
+      console.log(responseData);
+      return responseData;
+
+    } catch (error) {
+      console.error('Error fetching all events:', error);
+    }
+  },
+};
 
 export default DisplayEvent;
 

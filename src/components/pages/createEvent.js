@@ -31,7 +31,34 @@ function CreateEvent() {
     pictures: [],
     isValid: false,
   });
-
+  const submitForm = async () => {
+    try {
+      // Retrieve the user's token from local storage
+      const token = localStorage.getItem('access_token'); // Modify this based on where you store the token
+  console.log(formData);
+      // Include the token in the request headers
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      };
+  
+      const response = await fetch('http://127.0.0.1:8000/api/events', {
+        method: 'POST',
+        headers: headers, // Include the headers with the token
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error registering user');
+      }
+  
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error('Error logging user:', error.email);
+    }
+  }
+  
   const containerStyle = {
     minHeight: '70vh', // Ensure the container covers the entire viewport height
     position: 'relative', // Required for overlay
@@ -120,6 +147,7 @@ function CreateEvent() {
             onClick={() => {
               if (formData.isValid === true) {
                 if (page === FormTitles.length - 1) {
+                  submitForm();
                   alert('FORM SUBMITTED');
                   console.log(formData);
                 } else {

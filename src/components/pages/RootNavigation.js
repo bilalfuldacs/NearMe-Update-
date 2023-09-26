@@ -13,10 +13,7 @@ function Layout({ children }) {
       navigate('/login');
     }}, [token]);
 
-  // If there's no token, return null to prevent rendering other components
-  // if (!token) {
-  //   return null;
-  // }
+
 
   return (
     <div>

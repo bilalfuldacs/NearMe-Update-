@@ -1,9 +1,15 @@
+
+
+
 import { Navigate, createBrowserRouter } from "react-router-dom";
 import Login from "../components/login/LoginForm";
 import SignupForm from "../components/signup/SignupForm";
 import Layout from "../components/pages/RootNavigation";
 import DisplayEvent from "../components/pages/dispplayEvents";
 import CreateEvent from "../components/pages/createEvent";
+import Logout from "../components/pages/Logout";
+import DisplaySingleEvent from "../components/pages/displaySingleEvent";
+import { Loader } from "../components/pages/dispplayEvents";
 const Route = createBrowserRouter([
   {
     path: "/",
@@ -24,7 +30,7 @@ const Route = createBrowserRouter([
       },
       {
         path: "/logout", // Full path including parent route
-        element: < >i will logout</>,
+        element: < ><Logout/></>,
       },
     ],
   },
@@ -37,13 +43,21 @@ const Route = createBrowserRouter([
             index:true,
             element: <Navigate to="/events/display" />,
           },
-      {
-        path: "/events/display",
-        element: <DisplayEvent />,
-      },
+          {
+            path: "/events/display",
+            element: <DisplayEvent loader={Loader} />,
+          },
+          {
+            path: "/events/MyEvents",
+            element: <DisplayEvent loader={Loader} />,
+          },
       {
         path: "/events/create",
         element: <CreateEvent />,
+      },
+      {
+        path:"/events/:id",
+        element:<DisplaySingleEvent />
       },
     ],
     
@@ -55,3 +69,4 @@ const Route = createBrowserRouter([
 ]);
 
 export default Route;
+

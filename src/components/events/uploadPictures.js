@@ -11,23 +11,43 @@ const ImageUploader = ({setFormData}) => {
       isValid,
     }));
   }, [isValid]);
-  const handleDrop = (acceptedFiles) => {
-    const imageObjects = acceptedFiles.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
+  const handleDrop = async (acceptedFiles) => {
+    const imageObjects = await Promise.all(acceptedFiles.map(async (file) => {
+      const preview = URL.createObjectURL(file);
+      
+      // Convert the file to base64
+      const base64String = await fileToBase64(file);
+      
+      return {
+        file,
+        preview,
+        base64: base64String,
+      };
     }));
+  
     const updatedImages = [...images, ...imageObjects];
     setImages(updatedImages);
-   if (updatedImages.length > 0) {
-    console.log(isValid);
-    setIsValid(true);
+    
+    if (updatedImages.length > 0) {
+      setIsValid(true);
       setFormData((prevData) => ({
         ...prevData,
         images: updatedImages,
-        isValid
+        isValid,
       }));
     }
   };
+  
+  // Function to convert a File to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+  
 
   const handleRemoveImage = (index) => {
     const updatedImages = images.filter((_, i) => i !== index);

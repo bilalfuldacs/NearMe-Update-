@@ -10,7 +10,7 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { token } = useAuthContext();
+  const { token,updateToken } = useAuthContext();
 
 
   useEffect(() => {
@@ -47,9 +47,10 @@ function Login() {
       }
 
       const responseData = await response.json();
+      updateToken(responseData.access_token)
 
         console.log(responseData)
-       return navigate('/display/event');
+       return navigate('/events/display');
     // return redirect('/display/event');
   
       // Redirect to another page or update the UI based on the successful login
