@@ -9,11 +9,22 @@ import "./firebase-config";
 import Header from "./components/header/Header";
 import EventCreationWizard from "./components/eventsCreation/EventCreationWizard";
 import EventListPage from "./components/eventsDisplay/EventListPage";
+import { BrowserRouter } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Outlet,
+  RouterProvider,
+} from "react-router-dom";
+import AppRoute from "./components/routes/Routes";
+import { AuthContextProvider } from "./components/store/context/AuthContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Header />
-    <EventListPage />
+    <AuthContextProvider>
+      <RouterProvider router={AppRoute}></RouterProvider>
+    </AuthContextProvider>
   </React.StrictMode>
 );
 

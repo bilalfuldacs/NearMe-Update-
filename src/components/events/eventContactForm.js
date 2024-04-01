@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+import React, { useEffect, useState } from "react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 function EventContactForm({ onSubmit, setFormData }) {
   const [isValid, setIsValid] = useState(false);
   // Define validation schema using Yup
   const validationSchema = Yup.object().shape({
-    
-    eventDescription: Yup.string().required('Event Description is required'),
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    phone: Yup.string().required('Phone is required'),
-    whatsapp: Yup.string().required('WhatsApp is required'),
+    eventDescription: Yup.string().required("Event Description is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    phone: Yup.string().required("Phone is required"),
+    whatsapp: Yup.string().required("WhatsApp is required"),
   });
   useEffect(() => {
     setFormData((prevData) => ({
@@ -22,7 +23,7 @@ function EventContactForm({ onSubmit, setFormData }) {
   const handleBlurField = (e, formik) => {
     const { name, value } = e.target;
     const allFieldsFilled = areFieldsFilled(formik.values);
-   
+
     console.log(allFieldsFilled);
     if (allFieldsFilled) {
       setIsValid(true);
@@ -31,12 +32,12 @@ function EventContactForm({ onSubmit, setFormData }) {
     }
     // Check if the eventName field is valid and all fields are filled
     formik.validateField(name).then((error) => {
-      if (!error && value && !formik.errors[name] ) {
+      if (!error && value && !formik.errors[name]) {
         // Update the form data only if the eventName field is valid and has a value, and all fields are filled
         setFormData((prevData) => ({
           ...prevData,
           [name]: value,
-          isValid
+          isValid,
         }));
       }
     });
@@ -47,10 +48,10 @@ function EventContactForm({ onSubmit, setFormData }) {
   return (
     <Formik
       initialValues={{
-        eventDescription: '',
-        email: '',
-        phone: '',
-        whatsapp: '',
+        eventDescription: "",
+        email: "",
+        phone: "",
+        whatsapp: "",
       }}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
@@ -66,9 +67,10 @@ function EventContactForm({ onSubmit, setFormData }) {
                 name="eventDescription"
                 required
                 className={`form-control ${
-                  formik.touched.eventDescription && formik.errors.eventDescription
-                    ? 'is-invalid'
-                    : ''
+                  formik.touched.eventDescription &&
+                  formik.errors.eventDescription
+                    ? "is-invalid"
+                    : ""
                 }`}
                 rows="4" // You can adjust the number of rows as needed
                 onBlur={(e) => {
@@ -94,8 +96,8 @@ function EventContactForm({ onSubmit, setFormData }) {
                 required
                 className={`form-control ${
                   formik.touched.email && formik.errors.email
-                    ? 'is-invalid'
-                    : ''
+                    ? "is-invalid"
+                    : ""
                 }`}
                 onBlur={(e) => {
                   handleBlurField(e, formik);
@@ -120,8 +122,8 @@ function EventContactForm({ onSubmit, setFormData }) {
                 required
                 className={`form-control ${
                   formik.touched.phone && formik.errors.phone
-                    ? 'is-invalid'
-                    : ''
+                    ? "is-invalid"
+                    : ""
                 }`}
                 onBlur={(e) => {
                   handleBlurField(e, formik);
@@ -143,8 +145,8 @@ function EventContactForm({ onSubmit, setFormData }) {
                 required
                 className={`form-control ${
                   formik.touched.whatsapp && formik.errors.whatsapp
-                    ? 'is-invalid'
-                    : ''
+                    ? "is-invalid"
+                    : ""
                 }`}
                 onBlur={(e) => {
                   handleBlurField(e, formik);

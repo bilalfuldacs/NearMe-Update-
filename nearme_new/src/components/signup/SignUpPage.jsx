@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Grid } from "@mui/material";
 import SignUpForm from "./SignUpForm";
 import SignUpImage from "./SignUpImage";
@@ -6,8 +6,11 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase-config";
 import { getDoc } from "firebase/firestore";
+import { useAuthContext } from "../store/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const SignUpLogic = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     firstName: "",
     lastName: "",
@@ -17,7 +20,13 @@ const SignUpLogic = () => {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
-
+  const { token, updateToken } = useAuthContext();
+  useEffect(() => {
+    const storedToken = localStorage.getItem("access_token");
+    if (storedToken && storedToken === token) {
+      navigate("/events/display"); // Adjust the route as necessary
+    }
+  }, [token, navigate]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });

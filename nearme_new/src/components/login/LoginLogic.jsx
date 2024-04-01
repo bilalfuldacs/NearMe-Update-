@@ -1,14 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Grid } from "@mui/material";
 import LoginForm from "./LoginForm";
-import LogInImage from "./LoginImage"; // Formerly SignUpImage
+import LogInImage from "./LoginImage"; // Ensure this is the correct import path
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../../firebase-config"; // Import your Firebase auth object from where it is initialized
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../store/context/AuthContext"; // Ensure this is the correct import path
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 const LoginLogic = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
+  const { token, updateToken, updateUser } = useAuthContext();
+
+  // Redirect if token exists in localStorage and matches the context
+  useEffect(() => {
+    const storedToken = localStorage.getItem("access_token");
+    if (storedToken && storedToken === token) {
+      navigate("/events/display"); // Adjust the route as necessary
+    }
+  }, [token, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,9 +31,8 @@ const LoginLogic = () => {
     setErrors({ ...errors, [name]: "" });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simple validation check
     let tempErrors = {};
     tempErrors.email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(user.email)
       ? ""
@@ -27,8 +41,31 @@ const LoginLogic = () => {
     setErrors(tempErrors);
 
     if (Object.values(tempErrors).every((x) => x === "")) {
-      console.log(user);
-      // Handle login logic here
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          user.email,
+          user.password
+        );
+        updateToken(userCredential.user.accessToken); // Update token context
+
+        // Fetch user details from Firestore using the user's email
+        const usersRef = collection(db, "users");
+        const querySnapshot = await getDocs(
+          query(usersRef, where("email", "==", user.email))
+        );
+
+        if (!querySnapshot.empty) {
+          const userData = querySnapshot.docs[0].data();
+          console.log({ userData });
+          updateUser(userData); // Update user details context
+        }
+
+        navigate("/events/display"); // Navigate to the desired page after login
+      } catch (error) {
+        const errorMessage = error.message;
+        setErrors({ ...errors, auth: errorMessage });
+      }
     }
   };
 

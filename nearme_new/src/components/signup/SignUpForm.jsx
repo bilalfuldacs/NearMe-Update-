@@ -33,9 +33,12 @@ const SignUpForm = ({ user, onChange, onSubmit, errors }) => (
     >
       Sign Up
     </Button>
-    <Link href="#" variant="body2" style={{ margin: "20px 0" }}>
-      Already have an account? Sign in
-    </Link>
+    <Typography>
+      Already have an account?
+      <Link href="/" variant="body2" style={{ margin: "20px 0" }}>
+        Sign in
+      </Link>
+    </Typography>
   </Paper>
 );
 

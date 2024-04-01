@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import CreatedEvent from '../events/creatdEvents';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import EventDetail from '../events/eventDetails';
-import EventAdresss from '../events/eventAdress';
-import EventContactForm from '../events/eventContactForm';
-import AddressImage from '../../assets/istockphoto-1291287018-612x612.jpg';
-import contactImage from '../../assets/istockphoto-1305268276-612x612.jpg';
-import formDetails from '../../assets/172712633-man-fill-out-online-feedback-checklist-or-application-form-giving-rate-to-company-services.jpg';
-import UploadPictures from '../events/uploadPictures';
-import eventImage from '../../assets/empty-blue-white-studio-backdrop-abstract-gradient-grey-background-vintage-color-design-89483978.webp';
+import React, { useState } from "react";
+import CreatedEvent from "../events/creatdEvents";
+import "bootstrap/dist/css/bootstrap.min.css";
+import EventDetail from "../events/eventDetails";
+import EventAdresss from "../events/eventAdress";
+import EventContactForm from "../events/eventContactForm";
+import AddressImage from "../../assets/istockphoto-1291287018-612x612.jpg";
+import contactImage from "../../assets/istockphoto-1305268276-612x612.jpg";
+import formDetails from "../../assets/172712633-man-fill-out-online-feedback-checklist-or-application-form-giving-rate-to-company-services.jpg";
+import UploadPictures from "../events/uploadPictures";
+import eventImage from "../../assets/empty-blue-white-studio-backdrop-abstract-gradient-grey-background-vintage-color-design-89483978.webp";
 
 function CreateEvent() {
   const [page, setPage] = useState(0);
@@ -34,49 +34,46 @@ function CreateEvent() {
   const submitForm = async () => {
     try {
       // Retrieve the user's token from local storage
-      const token = localStorage.getItem('access_token'); // Modify this based on where you store the token
-  console.log(formData);
+      const token = localStorage.getItem("access_token"); // Modify this based on where you store the token
+      console.log(formData);
       // Include the token in the request headers
       const headers = {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       };
-  
-      const response = await fetch('http://127.0.0.1:8000/api/events', {
-        method: 'POST',
+
+      const response = await fetch("http://127.0.0.1:8000/api/events", {
+        method: "POST",
         headers: headers, // Include the headers with the token
         body: JSON.stringify(formData),
       });
-  
+
       if (!response.ok) {
-        throw new Error('Error registering user');
+        throw new Error("Error registering user");
       }
-  
+
       const responseData = await response.json();
       console.log(responseData);
     } catch (error) {
-      console.error('Error logging user:', error.email);
+      console.error("Error logging user:", error.email);
     }
-  }
-  
-  const containerStyle = {
-    minHeight: '70vh', // Ensure the container covers the entire viewport height
-    position: 'relative', // Required for overlay
   };
 
- 
+  const containerStyle = {
+    minHeight: "70vh", // Ensure the container covers the entire viewport height
+    position: "relative", // Required for overlay
+  };
 
   const overlayStyle = {
     content: "",
     background: `url(${eventImage})`,
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     zIndex: -1,
     opacity: 0.9,
- 
   };
   const [showAlert, setShowAlert] = useState(false);
 
@@ -104,34 +101,25 @@ function CreateEvent() {
         <img
           src={formDetails}
           alt="Loading..."
-          style={{ height: '430px', marginTop: '20px' }}
+          style={{ height: "430px", marginTop: "20px" }}
         />
       );
     } else if (page === 1 || page === 2) {
       return (
-        <img
-          src={AddressImage}
-          alt="Loading..."
-          style={{ height: '360px' }}
-        />
+        <img src={AddressImage} alt="Loading..." style={{ height: "360px" }} />
       );
     } else {
       return (
-        <img
-          src={contactImage}
-          alt="Loading..."
-          style={{ height: '430px' }}
-        />
+        <img src={contactImage} alt="Loading..." style={{ height: "430px" }} />
       );
     }
   };
 
   return (
     <div className="container-fluid mt-3">
-
-      <div className='row w-100 mt-3'>
-        <div className='col-sm-4'>{PicDisplay()}</div>
-        <div className='col-sm-8 border border-primary h-50 mt-5 '>
+      <div className="row w-100 mt-3">
+        <div className="col-sm-4">{PicDisplay()}</div>
+        <div className="col-sm-8 border border-primary h-50 mt-5 ">
           {PageDisplay()}
           <button
             onClick={() => {
@@ -148,7 +136,7 @@ function CreateEvent() {
               if (formData.isValid === true) {
                 if (page === FormTitles.length - 1) {
                   submitForm();
-                  alert('FORM SUBMITTED');
+                  alert("FORM SUBMITTED");
                   console.log(formData);
                 } else {
                   setPage((currPage) => currPage + 1);
@@ -158,41 +146,44 @@ function CreateEvent() {
               }
             }}
           >
-            {page === FormTitles.length - 1 ? 'Submit' : 'Next'}
+            {page === FormTitles.length - 1 ? "Submit" : "Next"}
           </button>
         </div>
       </div>
 
       {showAlert && (
         <div
-          className='container d-flex justify-content-center align-items-center w-25 h-25'
+          className="container d-flex justify-content-center align-items-center w-25 h-25"
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            margin: 'auto',
-            width: '50%',
-            height: '50%',
+            margin: "auto",
+            width: "50%",
+            height: "50%",
           }}
         >
-          <div className='alert alert-danger alert-dismissible text-center' role='alert'>
+          <div
+            className="alert alert-danger alert-dismissible text-center"
+            role="alert"
+          >
             Fill all required fields.
             <button
-              type='button'
-              className='btn-close'
-              data-bs-dismiss='alert'
-              aria-label='Close'
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
               onClick={() => setShowAlert(false)}
             ></button>
           </div>
         </div>
       )}
 
-      <div className='row mb-5'>
-        <div className='col-4'></div>
-        <div className='col-8 mb-5'></div>
+      <div className="row mb-5">
+        <div className="col-4"></div>
+        <div className="col-8 mb-5"></div>
       </div>
     </div>
   );
