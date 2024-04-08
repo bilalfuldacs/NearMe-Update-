@@ -43,8 +43,8 @@ function FilterPanel({ filters, onFiltersChange, onFilterSubmit }) {
           value={filters.category}
           onChange={handleChange}
         >
-          <MenuItem value="concerts">Concerts</MenuItem>
-          <MenuItem value="sports">Sports</MenuItem>
+          <MenuItem value="Type1">Type1</MenuItem>
+          <MenuItem value="Type2">Type2</MenuItem>
           {/* Add more MenuItems here */}
         </Select>
       </FormControl>
@@ -54,27 +54,27 @@ function FilterPanel({ filters, onFiltersChange, onFilterSubmit }) {
         <Select
           labelId="Event-Location"
           label="Event-Location" // This should match the InputLabel
-          name="EventLocation"
+          name="eventLocation"
           value={filters.eventLocation}
           onChange={handleChange}
         >
-          <MenuItem value="outdoor">Outdoor</MenuItem>
-          <MenuItem value="indoor">Indoor</MenuItem>
+          <MenuItem value="Location1">Location1</MenuItem>
+          <MenuItem value="Location2">Location2</MenuItem>
           {/* Add more MenuItems here */}
         </Select>
       </FormControl>
 
       <FormControl fullWidth margin="normal">
-        <InputLabel id="Preferred-Age-Group">Preferred Age Group</InputLabel>
+        <InputLabel id="Preferred-Age-Group">Preferred Gender</InputLabel>
         <Select
-          name="ageGroup"
-          label="Preferred-Age-Group" // This should match the InputLabel
-          labelId="Preferred-Age-Group"
-          value={filters.ageGroup}
+          name="preferredGender"
+          label="preferred Gender" // This should match the InputLabel
+          labelId="preferred Gender"
+          value={filters.preferredGender}
           onChange={handleChange}
         >
-          <MenuItem value="all">All Ages</MenuItem>
-          <MenuItem value="adults">Adults</MenuItem>
+          <MenuItem value="Any">Any</MenuItem>
+          <MenuItem value="male">Male</MenuItem>
           {/* Add more MenuItems here */}
         </Select>
       </FormControl>

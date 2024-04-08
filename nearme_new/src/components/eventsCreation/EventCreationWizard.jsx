@@ -16,10 +16,10 @@ const FormManager = () => {
     eventType: "",
     eventLocation: "",
     totalPeopleAllowed: "",
-    ageGroup: "",
     preferredGender: "",
     country: "",
     city: "",
+    state: "",
     street: "",
     postalCode: "",
     phone: "",
@@ -111,15 +111,26 @@ const FormManager = () => {
     // If you want to store only the image names in Firestore
     const imageNames = pictures.map((file) => file.name);
 
-    const eventWithImageNames = {
+    // Fetch the user object from local storage
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    // Ensure the user object exists and has an email before proceeding
+    if (!user || !user.email) {
+      console.error("No user email found in local storage.");
+      // Handle the missing user/email scenario appropriately
+      return;
+    }
+
+    const eventWithImageNamesAndUserEmail = {
       ...eventDataWithoutPictures,
       imageNames, // This will be an array of image file names
+      userEmail: user.email, // Add the user's email to the event data
     };
 
     try {
       const docRef = await addDoc(
         collection(db, "events"),
-        eventWithImageNames
+        eventWithImageNamesAndUserEmail
       );
       console.log("Event stored in Firestore with ID:", docRef.id);
       // Optionally, navigate to a success page or reset the form here

@@ -19,6 +19,19 @@ const LoginLogic = () => {
 
   // Redirect if token exists in localStorage and matches the context
   useEffect(() => {
+    var headers = new Headers();
+    headers.append("X-CSCAPI-KEY", "API_KEY");
+
+    var requestOptions = {
+      method: "GET",
+      headers: headers,
+      redirect: "follow",
+    };
+
+    fetch("https://api.countrystatecity.in/v1/countries", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
     const storedToken = localStorage.getItem("access_token");
     if (storedToken && storedToken === token) {
       navigate("/events/display"); // Adjust the route as necessary

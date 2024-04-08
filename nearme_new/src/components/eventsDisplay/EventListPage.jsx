@@ -1,222 +1,131 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Grid, Typography } from "@mui/material";
-import FilterPanel from "./FilterPanel"; // Assume this is in the same directory
-import EventCard from "./EventCard"; // Assume this is in the same directory
-import CustomPagination from "./Pagination"; // Assume this is in the same directory
+import FilterPanel from "./FilterPanel";
+import EventCard from "./EventCard";
+import CustomPagination from "./Pagination";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../../firebase-config";
+import { useLocation } from "react-router-dom";
 
 function EventListPage() {
-  // Dummy data for the events
-  const dummyEvents = [
-    {
-      id: 1,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 21,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 22,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 3,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 4,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 5,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 6,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 7,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 8,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 9,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 10,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 11,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 12,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 13,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 14,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 15,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 16,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 17,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 18,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 19,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    {
-      id: 20,
-      title: "Concert in the Park",
-      date: "2023-07-16",
-      location: "Outdoor",
-      address: "123 Park Ave, City",
-      image: "/path/to/event1.jpg", // Replace with actual image paths
-    },
-    // ... more dummy event objects
-  ];
+  const [allEvents, setAllEvents] = useState([]); // All fetched events
+  const [filteredEvents, setFilteredEvents] = useState([]); // Events after filters are applied
+  const eventsPerPage = 7;
+  const [currentPage, setCurrentPage] = useState(1);
+  const location = useLocation();
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      let q;
+      if (location.pathname.startsWith("/events/MyEvents")) {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (!user || !user.email) {
+          console.error("User is not logged in or email is not available");
+          return;
+        }
+        q = query(
+          collection(db, "events"),
+          where("userEmail", "==", user.email)
+        );
+      } else if (location.pathname.startsWith("/events/display")) {
+        q = query(collection(db, "events"));
+      } else {
+        return;
+      }
+
+      const querySnapshot = await getDocs(q);
+      const fetchedEvents = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setAllEvents(fetchedEvents);
+      setFilteredEvents(fetchedEvents);
+    };
+
+    fetchEvents();
+  }, [location.pathname]);
 
   const [filters, setFilters] = useState({
     distance: 30,
     category: "",
     eventLocation: "",
-    ageGroup: "",
+    preferredGender: "",
     fromDate: "",
     toDate: "",
   });
-
-  const eventsPerPage = 7; // Number of events you want per page
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Given the current page and events per page, calculate the slice of events to show
-  const indexOfLastEvent = currentPage * eventsPerPage;
-  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
-  const currentEvents = dummyEvents.slice(indexOfFirstEvent, indexOfLastEvent);
-
-  const [events, setEvents] = useState(dummyEvents);
 
   const handleFiltersChange = (newFilters) => {
     setFilters(newFilters);
   };
 
   const handleFilterSubmit = () => {
-    // Perform API call to fetch events based on filters
+    let newFilteredEvents = [...allEvents]; // Start with all events for filtering
+
+    // Filter by category if a category is selected
+    if (filters.category) {
+      newFilteredEvents = newFilteredEvents.filter(
+        (event) => event.eventType === filters.category
+      );
+    }
+
+    // Further filter by event location if an event location is selected
+    if (filters.eventLocation) {
+      newFilteredEvents = newFilteredEvents.filter(
+        (event) => event.eventLocation === filters.eventLocation
+      );
+    }
+
+    // Further filter by age group if an age group is selected
+    if (filters.ageGroup) {
+      newFilteredEvents = newFilteredEvents.filter(
+        (event) => event.preferredGender === filters.ageGroup
+      );
+    }
+
+    // Further filter by date range if a date range is selected
+    if (filters.fromDate && filters.toDate) {
+      newFilteredEvents = newFilteredEvents.filter((event) => {
+        const eventStartDate = new Date(event.fromDate).getTime();
+        const eventEndDate = new Date(event.toDate).getTime();
+        const filterStartDate = new Date(filters.fromDate).getTime();
+        const filterEndDate = new Date(filters.toDate).getTime();
+        return (
+          (eventStartDate <= filterEndDate &&
+            eventStartDate >= filterStartDate) ||
+          (eventEndDate <= filterEndDate && eventEndDate >= filterStartDate) ||
+          (eventStartDate <= filterStartDate && eventEndDate >= filterEndDate)
+        );
+      });
+    }
+
+    console.log(filters);
+    console.log(newFilteredEvents);
+
+    setFilteredEvents(newFilteredEvents); // Update the state with the new filtered list
+    setCurrentPage(1); // Reset to the first page after filtering
   };
 
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
-    // Perform API call to fetch events based on new page
   };
+
+  // Calculate the slice of filtered events to display based on pagination
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = filteredEvents.slice(
+    indexOfFirstEvent,
+    indexOfLastEvent
+  );
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid item xs={12} md={3}>
           <FilterPanel
             filters={filters}
-            onFiltersChange={setFilters}
-            onFilterSubmit={() => {}}
+            onFiltersChange={handleFiltersChange}
+            onFilterSubmit={handleFilterSubmit}
           />
         </Grid>
         <Grid item xs={12} md={9}>
@@ -231,7 +140,7 @@ function EventListPage() {
             ))}
           </Grid>
           <CustomPagination
-            pageCount={Math.ceil(dummyEvents.length / eventsPerPage)}
+            pageCount={Math.ceil(filteredEvents.length / eventsPerPage)}
             currentPage={currentPage}
             onPageChange={handlePageChange}
           />

@@ -10,15 +10,15 @@ import {
   Avatar,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../store/context/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
-  const { token, updateToken } = useAuthContext();
+  const { updateToken } = useAuthContext();
+
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -26,8 +26,9 @@ const Header = () => {
   const handleLogout = () => {
     updateToken(null);
     handleMenuClose();
-    navigate("/login"); // Redirect to login page
+    navigate("/login");
   };
+
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
@@ -74,6 +75,9 @@ const Header = () => {
             onClose={handleMenuClose}
           >
             <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+            <MenuItem onClick={() => navigate("/events/MyEvents")}>
+              My Events
+            </MenuItem>
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Toolbar>

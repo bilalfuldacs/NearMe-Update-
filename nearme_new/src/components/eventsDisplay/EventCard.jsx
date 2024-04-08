@@ -10,9 +10,15 @@ function EventCard({ event }) {
         alt="Event"
       />
       <CardContent>
-        <Typography variant="h6">{event.date}</Typography>
-        <Typography variant="body2">{event.location}</Typography>
-        <Typography variant="body2">{event.address}</Typography>
+        <Typography variant="h6">{event.eventName}</Typography>
+        <Typography variant="h6">
+          {event.street} {event.hausNummber} {event.city} {event.postalCode}
+          {event.country}
+        </Typography>
+        <Typography variant="h6">
+          From Date: {event.fromDate}
+          {"  "} To Date: {event.toDate}
+        </Typography>
       </CardContent>
     </Card>
   );
